@@ -23,8 +23,8 @@ export default function AppNav() {
 
   return (
     <nav className="flex items-center justify-between px-6 md:px-10 py-5" style={{ borderBottom: "1px solid var(--line)" }}>
-      <Link href="/wardrobe" className="serif text-lg" style={{ letterSpacing: "0.1em" }}>
-        FASHION · STUDIO
+      <Link href="/wardrobe" className="text-sm" style={{ letterSpacing: "0.15em", fontWeight: 500 }}>
+        fashion studio
       </Link>
       <div className="flex items-center gap-8">
         {links.map((l) => {

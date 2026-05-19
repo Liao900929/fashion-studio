@@ -67,7 +67,7 @@ export default function WardrobePage() {
             if (n === 0) return null;
             return (
               <FilterChip key={cat} active={filter === cat} onClick={() => setFilter(cat)}>
-                {CATEGORY_LABELS[cat].emoji} {CATEGORY_LABELS[cat].zh} · {n}
+                {CATEGORY_LABELS[cat].zh} {n}
               </FilterChip>
             );
           })}

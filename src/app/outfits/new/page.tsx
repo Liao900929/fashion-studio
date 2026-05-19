@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
 import AppNav from "@/components/AppNav";
 import { CATEGORY_LABELS, type ClothingItem, type Category } from "@/types";
+import { analyzeOutfit } from "@/lib/trends/ss-2026";
 import { X, Sparkles, Loader2 } from "lucide-react";
 
 const OCCASIONS = ["日常", "上班", "約會", "派對", "運動", "正式場合"];
@@ -226,16 +227,48 @@ function NewOutfitInner() {
                 ))}
               </div>
 
+              {/* 規則式推薦原因（免費 即時 ）*/}
+              {selectedItems.length >= 2 && (() => {
+                const insights = analyzeOutfit(selectedItems, occasion);
+                if (insights.length === 0) return null;
+                return (
+                  <div className="mb-5">
+                    <p className="eyebrow mb-3">為什麼這套可行</p>
+                    <div className="flex flex-col gap-2">
+                      {insights.map((ins, i) => (
+                        <div
+                          key={i}
+                          className="p-3"
+                          style={{
+                            background: "var(--bg-elev-2)",
+                            border: "1px solid var(--line)",
+                            borderLeft: "2px solid var(--accent)",
+                            borderRadius: 2,
+                          }}
+                        >
+                          <p className="text-xs font-medium mb-1" style={{ color: "var(--accent)", letterSpacing: "0.1em" }}>
+                            {ins.title}
+                          </p>
+                          <p className="text-xs leading-relaxed" style={{ color: "var(--fg-dim)" }}>
+                            {ins.desc}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {advice && (
                 <div className="mb-5 p-4" style={{ background: "var(--bg)", border: "1px solid var(--accent-soft)", borderRadius: 2 }}>
-                  <p className="eyebrow mb-2" style={{ color: "var(--accent)" }}>Yuki 的評語</p>
+                  <p className="eyebrow mb-2" style={{ color: "var(--accent)" }}>Yuki AI 進階評語</p>
                   <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--fg)" }}>
                     {advice}
                   </p>
                 </div>
               )}
 
-              {error && <p className="text-xs mb-4" style={{ color: "var(--danger)" }}>⚠ {error}</p>}
+              {error && <p className="text-xs mb-4" style={{ color: "var(--danger)" }}>{error}</p>}
 
               <button
                 onClick={getAdvice}

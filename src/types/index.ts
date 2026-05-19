@@ -4,17 +4,17 @@ export type Category =
 
 export type Season = 'spring' | 'summer' | 'fall' | 'winter'
 
-export const CATEGORY_LABELS: Record<Category, { zh: string; emoji: string }> = {
-  hat: { zh: '帽子', emoji: '🧢' },
-  top: { zh: '上衣', emoji: '👕' },
-  bottom: { zh: '褲裝', emoji: '👖' },
-  skirt: { zh: '裙裝', emoji: '👗' },
-  shoes: { zh: '鞋類', emoji: '👟' },
-  jacket: { zh: '外套', emoji: '🧥' },
-  shirt: { zh: '襯衫', emoji: '👔' },
-  accessory: { zh: '配件', emoji: '⌚' },
-  bag: { zh: '包款', emoji: '👜' },
-  other: { zh: '其他', emoji: '✨' },
+export const CATEGORY_LABELS: Record<Category, { zh: string }> = {
+  hat: { zh: '帽子' },
+  top: { zh: '上衣' },
+  bottom: { zh: '褲裝' },
+  skirt: { zh: '裙裝' },
+  shoes: { zh: '鞋類' },
+  jacket: { zh: '外套' },
+  shirt: { zh: '襯衫' },
+  accessory: { zh: '配件' },
+  bag: { zh: '包款' },
+  other: { zh: '其他' },
 }
 
 export const SEASON_LABELS: Record<Season, string> = {

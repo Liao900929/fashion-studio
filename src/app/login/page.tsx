@@ -46,14 +46,14 @@ export default function LoginPage() {
           </svg>
         </div>
         <div className="relative z-10 flex flex-col justify-end p-12 w-full">
-          <p className="eyebrow mb-3">SS 2026 · Editorial</p>
+          <p className="eyebrow mb-3">SS 2026 Editorial</p>
           <h2
             className="text-4xl md:text-5xl mb-3 serif"
             style={{ color: "var(--fg)", letterSpacing: "-0.02em" }}
           >
-            屬於你的<br/>
+            創造屬於<br/>
             <span style={{ fontStyle: "italic", color: "var(--accent)" }}>
-              私人衣櫥檔案
+              自己的衣櫥空間
             </span>
           </h2>
           <p style={{ color: "var(--fg-dim)", maxWidth: "28rem" }}>
@@ -65,8 +65,8 @@ export default function LoginPage() {
       {/* Right: login form */}
       <div className="flex-1 flex items-center justify-center p-8 md:p-16">
         <div className="w-full max-w-sm">
-          <p className="eyebrow mb-4">FASHION STUDIO</p>
-          <h1 className="text-3xl md:text-4xl mb-3 serif">登入你的衣櫥</h1>
+          <p className="eyebrow mb-4">fashion studio</p>
+          <h1 className="text-3xl md:text-4xl mb-3 serif">創造屬於自己的衣櫥空間</h1>
           <p className="text-sm mb-10" style={{ color: "var(--fg-dim)" }}>
             使用 Google 帳號一鍵登入，立即開始建立你的個人搭配空間。
           </p>

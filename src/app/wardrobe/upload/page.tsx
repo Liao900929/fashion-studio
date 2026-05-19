@@ -8,7 +8,8 @@ import AppNav from "@/components/AppNav";
 import { removeBg } from "@/lib/backgroundRemoval";
 import { CATEGORY_LABELS, type Category, type Brand, type Season, SEASON_LABELS } from "@/types";
 import type { ClothingAnalysis } from "@/lib/ai/openai";
-import { Camera, Upload, Loader2, X } from "lucide-react";
+import { matchTrends } from "@/lib/trends/ss-2026";
+import { Upload, Loader2, X } from "lucide-react";
 
 type Step = "capture" | "processing" | "review" | "saving";
 
@@ -283,7 +284,7 @@ export default function UploadPage() {
                   </div>
                 ))}
               </div>
-              {analysis && (
+              {analysis?.description && (
                 <div className="mt-6">
                   <p className="eyebrow mb-2">AI 觀察</p>
                   <p className="text-sm italic serif" style={{ color: "var(--fg-dim)" }}>
@@ -296,6 +297,14 @@ export default function UploadPage() {
                   </div>
                 </div>
               )}
+
+              {/* SS '26 趨勢推薦（規則式 免費） */}
+              <TrendRecommendation
+                category={category}
+                colorHex={colorHex}
+                material={material}
+                analysis={analysis}
+              />
             </div>
 
             {/* Form */}
@@ -305,7 +314,7 @@ export default function UploadPage() {
               <Field label="品類">
                 <select className="input" value={category} onChange={(e) => setCategory(e.target.value as Category)}>
                   {(Object.keys(CATEGORY_LABELS) as Category[]).map((c) => (
-                    <option key={c} value={c}>{CATEGORY_LABELS[c].emoji} {CATEGORY_LABELS[c].zh}</option>
+                    <option key={c} value={c}>{CATEGORY_LABELS[c].zh}</option>
                   ))}
                 </select>
               </Field>
@@ -397,6 +406,68 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
         {label}
       </label>
       {children}
+    </div>
+  );
+}
+
+function TrendRecommendation({
+  category,
+  colorHex,
+  material,
+  analysis,
+}: {
+  category: Category;
+  colorHex: string;
+  material: string;
+  analysis: ClothingAnalysis | null;
+}) {
+  const matches = matchTrends({
+    category,
+    color_hex: colorHex,
+    material,
+    ai_tags: analysis ? { description: analysis.description, style_tags: analysis.style_tags } : null,
+  });
+
+  if (matches.length === 0) return null;
+
+  return (
+    <div className="mt-8 pt-6" style={{ borderTop: "1px solid var(--line)" }}>
+      <p className="eyebrow mb-3">SS 2026 趨勢推薦</p>
+      <p className="text-xs mb-4" style={{ color: "var(--fg-muted)" }}>
+        資料來源 Vogue Elle Harper&apos;s BAZAAR 米蘭巴黎紐約東京時裝週
+      </p>
+      <div className="flex flex-col gap-3">
+        {matches.map((m) => (
+          <div key={m.trend.id} className="card p-4" style={{ borderColor: "var(--accent-soft)" }}>
+            <div className="flex items-baseline justify-between mb-2 gap-3">
+              <h4 className="font-medium" style={{ fontSize: "0.95rem" }}>
+                {m.trend.name}
+              </h4>
+              <span className="text-xs" style={{ color: "var(--accent)" }}>
+                契合度 {Math.min(100, Math.round(m.score))}%
+              </span>
+            </div>
+            <p className="text-xs leading-relaxed mb-3" style={{ color: "var(--fg-dim)" }}>
+              {m.trend.blurb}
+            </p>
+            <p className="text-xs mb-2" style={{ color: "var(--fg-muted)" }}>
+              {m.trend.source}
+            </p>
+            <div className="flex gap-1.5 mb-2">
+              {m.trend.colors.slice(0, 5).map((c, i) => (
+                <span
+                  key={i}
+                  className="block w-5 h-5 rounded-sm"
+                  style={{ background: c, border: "1px solid var(--line)" }}
+                />
+              ))}
+            </div>
+            <p className="text-xs italic" style={{ color: "var(--fg-dim)" }}>
+              建議搭配 {m.trend.keyPieces.slice(0, 3).join(" · ")}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

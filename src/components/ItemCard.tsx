@@ -32,7 +32,7 @@ export default function ItemCard({ item }: { item: ClothingItem }) {
       <div className="pt-3 pb-1 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xs uppercase tracking-widest" style={{ color: "var(--fg-dim)" }}>
-            {cat.emoji} {cat.zh}
+            {cat.zh}
           </span>
         </div>
         {item.color_hex && (

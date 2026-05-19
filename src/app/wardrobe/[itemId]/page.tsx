@@ -93,7 +93,7 @@ export default function ItemDetailPage() {
 
           {/* Details */}
           <div>
-            <p className="eyebrow mb-2">{cat.emoji} {cat.zh}</p>
+            <p className="eyebrow mb-2">{cat.zh}</p>
             <h1 className="serif text-4xl md:text-5xl mb-2">
               {brand?.name ?? "未指定品牌"}
             </h1>

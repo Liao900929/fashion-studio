@@ -50,7 +50,7 @@ export default function Carousel360({ images }: { images: string[] }) {
             className="absolute top-3 right-3 text-xs uppercase tracking-widest px-2 py-1"
             style={{ background: "rgba(31,26,21,0.75)", color: "#F0EEE9", letterSpacing: "0.15em" }}
           >
-            ✦ 滑鼠移過可傾斜
+            Hover to tilt
           </span>
         </ParallaxTilt>
       </div>

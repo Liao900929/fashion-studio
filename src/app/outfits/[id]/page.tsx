@@ -91,7 +91,7 @@ export default function OutfitDetailPage() {
                 <img src={it.primary_image_url} alt="" className="w-full block" style={{ aspectRatio: "1", objectFit: "cover" }} />
                 <div className="p-2">
                   <p className="text-xs uppercase tracking-widest" style={{ color: "var(--fg-dim)" }}>
-                    {CATEGORY_LABELS[it.category].emoji} {CATEGORY_LABELS[it.category].zh}
+                    {CATEGORY_LABELS[it.category].zh}
                   </p>
                   <p className="text-xs serif italic" style={{ color: "var(--fg-muted)" }}>
                     {it.color_name} {it.material}
