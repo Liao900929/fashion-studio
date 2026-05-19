@@ -69,49 +69,75 @@ export default function UploadPage() {
     }
     setAngleFiles(processed);
 
-    // 嘗試 AI 分析（沒金鑰會回 disabled: true，自動跳過）
-    setProcessingMsg("AI 正在分析單品...");
+    // === 免費瀏覽器分析：顏色 + 品類 + 季節（全部本機跑、零成本）===
+    try {
+      setProcessingMsg("正在抽取主色...");
+      const { extractColors, predictCategory, guessSeasons } = await import("@/lib/imageAnalysis");
+
+      const colorRes = await extractColors(processed[0].processed);
+      setColorHex(colorRes.dominantHex);
+      setColorName(colorRes.dominantName);
+
+      // 順便存 palette 到 analysis 物件供後續儲存
+      const baseAnalysis = {
+        category: "top" as Category,
+        material: "",
+        color_hex: colorRes.dominantHex,
+        color_name: colorRes.dominantName,
+        palette: colorRes.palette,
+        season: guessSeasons(colorRes.dominantHex),
+        description: "",
+        style_tags: [],
+      };
+      setSeason(baseAnalysis.season);
+
+      // 載入 MobileNet 第一次會下載模型（約 16MB，之後快取）
+      setProcessingMsg("AI 正在猜測品類...");
+      try {
+        const catRes = await predictCategory(processed[0].processed);
+        setCategory(catRes.category);
+        baseAnalysis.category = catRes.category;
+      } catch {
+        // 模型載入失敗就跳過，使用者手動選
+      }
+
+      setAnalysis(baseAnalysis);
+    } catch (err) {
+      console.warn("免費分析失敗", err);
+    }
+
+    // === 進階 AI（OpenAI Vision，需金鑰）— 有的話會覆蓋上面的結果以更精準 ===
     try {
       const tempPath = `temp/${Date.now()}.png`;
       const { error: uploadErr } = await supabase.storage
         .from("clothing")
         .upload(tempPath, processed[0].processed, { contentType: "image/png", upsert: true });
-      if (uploadErr) throw uploadErr;
 
-      const { data: pub } = supabase.storage.from("clothing").getPublicUrl(tempPath);
-      const res = await fetch("/api/analyze-item", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: pub.publicUrl }),
-      });
-
-      const data = await res.json();
-
-      // 沒設 AI 金鑰：跳過分析，留空讓使用者手動填
-      if (data.disabled) {
+      if (!uploadErr) {
+        const { data: pub } = supabase.storage.from("clothing").getPublicUrl(tempPath);
+        setProcessingMsg("OpenAI Vision 進階分析中...");
+        const res = await fetch("/api/analyze-item", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl: pub.publicUrl }),
+        });
+        const data = await res.json();
+        if (!data.disabled && res.ok && !data.error) {
+          const a = data as ClothingAnalysis;
+          setAnalysis(a);
+          if (a.category) setCategory(a.category as Category);
+          if (a.material) setMaterial(a.material);
+          if (a.color_name) setColorName(a.color_name);
+          if (a.color_hex) setColorHex(a.color_hex);
+          if (a.season) setSeason(a.season as Season[]);
+        }
         await supabase.storage.from("clothing").remove([tempPath]);
-        setStep("review");
-        return;
       }
-
-      if (!res.ok || data.error) throw new Error(data.error ?? "分析失敗");
-
-      const a = data as ClothingAnalysis;
-      setAnalysis(a);
-      setCategory((a.category as Category) ?? "top");
-      setMaterial(a.material ?? "");
-      setColorName(a.color_name ?? "");
-      setColorHex(a.color_hex ?? "");
-      setSeason((a.season as Season[]) ?? []);
-
-      // Cleanup temp
-      await supabase.storage.from("clothing").remove([tempPath]);
-
-      setStep("review");
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "AI 分析失敗 請手動填寫");
-      setStep("review");
+    } catch {
+      // OpenAI 失敗不影響流程，免費分析的結果已經就位
     }
+
+    setStep("review");
   }
 
   function skipAndManual() {
