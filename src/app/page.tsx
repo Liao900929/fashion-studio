@@ -91,56 +91,40 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Right column — lookbook image collage */}
-          <div className="col-span-12 md:col-span-5 relative" style={{ minHeight: "70vh" }}>
+          {/* Right column — lookbook 垂直堆疊 + 寬度錯落 */}
+          <div className="col-span-12 md:col-span-5 relative">
             {/* Vertical rail label */}
             <div className="hidden md:block absolute -left-8 top-8 rail-text">
               The Wardrobe Issue
             </div>
 
-            {/* Tile 1 - tall */}
-            <div
-              className="lookbook-tile absolute reveal"
-              data-label="01 · Outerwear"
-              style={{
-                top: 0,
-                right: "10%",
-                width: "60%",
-                aspectRatio: "3 / 4",
-                animationDelay: "0.5s",
-              }}
-            >
-              <PlaceholderArt variant={1} />
-            </div>
+            <div className="flex flex-col gap-6">
+              {/* Look 01 - 靠右 寬 78% 3:4 直 */}
+              <div
+                className="lookbook-tile reveal self-end"
+                data-label="01 · Outerwear"
+                style={{ width: "78%", aspectRatio: "3 / 4", animationDelay: "0.5s" }}
+              >
+                <PlaceholderArt variant={1} />
+              </div>
 
-            {/* Tile 2 - mid offset */}
-            <div
-              className="lookbook-tile absolute reveal"
-              data-label="02 · Knitwear"
-              style={{
-                top: "40%",
-                left: 0,
-                width: "48%",
-                aspectRatio: "1 / 1",
-                animationDelay: "0.8s",
-              }}
-            >
-              <PlaceholderArt variant={2} />
-            </div>
+              {/* Look 02 - 靠左 寬 62% 正方 */}
+              <div
+                className="lookbook-tile reveal self-start"
+                data-label="02 · Knitwear"
+                style={{ width: "62%", aspectRatio: "1 / 1", animationDelay: "0.8s" }}
+              >
+                <PlaceholderArt variant={2} />
+              </div>
 
-            {/* Tile 3 - bottom right small */}
-            <div
-              className="lookbook-tile absolute reveal"
-              data-label="03 · Accessories"
-              style={{
-                bottom: 0,
-                right: 0,
-                width: "42%",
-                aspectRatio: "4 / 5",
-                animationDelay: "1.1s",
-              }}
-            >
-              <PlaceholderArt variant={3} />
+              {/* Look 03 - 靠右 寬 55% 4:5 */}
+              <div
+                className="lookbook-tile reveal self-end"
+                data-label="03 · Accessories"
+                style={{ width: "55%", aspectRatio: "4 / 5", animationDelay: "1.1s" }}
+              >
+                <PlaceholderArt variant={3} />
+              </div>
             </div>
           </div>
         </div>
