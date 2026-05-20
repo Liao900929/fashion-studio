@@ -11,31 +11,53 @@ import type { Category, Season } from "@/types";
 // ============================ 顏色 ============================
 
 const COLOR_NAMES: { hex: string; zh: string }[] = [
+  // 黑白灰
   { hex: "#000000", zh: "黑色" },
   { hex: "#1F1A15", zh: "墨色" },
+  { hex: "#2c2c2c", zh: "炭灰" },
+  { hex: "#555555", zh: "深灰" },
+  { hex: "#888888", zh: "灰色" },
+  { hex: "#bdbdbd", zh: "淺灰" },
+  { hex: "#e0e0e0", zh: "銀灰" },
+  { hex: "#f5f1ea", zh: "奶白色" },
+  { hex: "#ffffff", zh: "純白" },
+  // 棕大地
   { hex: "#3a2a1c", zh: "深棕" },
   { hex: "#6b4f3a", zh: "咖啡色" },
   { hex: "#8b6f47", zh: "卡其色" },
-  { hex: "#B25A36", zh: "焙焦赭土" },
+  { hex: "#a8835a", zh: "焦糖色" },
+  { hex: "#B25A36", zh: "赭土色" },
+  { hex: "#a85f3e", zh: "陶土色" },
   { hex: "#c9a96e", zh: "香檳金" },
   { hex: "#d4c5a8", zh: "米色" },
-  { hex: "#f5f1ea", zh: "奶白色" },
-  { hex: "#ffffff", zh: "純白" },
+  { hex: "#e7dcc4", zh: "燕麥色" },
+  { hex: "#7a6a52", zh: "摩卡色" },
+  // 紅橙黃
+  { hex: "#8b1a2e", zh: "酒紅" },
+  { hex: "#b32d3f", zh: "正紅" },
   { hex: "#e85d4a", zh: "磚紅" },
-  { hex: "#a85f3e", zh: "陶土" },
+  { hex: "#d97742", zh: "橘色" },
   { hex: "#f5b97a", zh: "蜜桃色" },
   { hex: "#fde68a", zh: "麥黃" },
+  { hex: "#f0d060", zh: "鵝黃" },
+  // 綠
   { hex: "#86efac", zh: "薄荷綠" },
   { hex: "#5a7a4d", zh: "橄欖綠" },
+  { hex: "#3d5a3d", zh: "軍綠" },
   { hex: "#1f3a2c", zh: "森林綠" },
+  // 藍
   { hex: "#6db4d0", zh: "天空藍" },
   { hex: "#3a4f6b", zh: "靛藍" },
   { hex: "#1a1f2b", zh: "藏青" },
+  { hex: "#2a4d6e", zh: "丹寧藍" },
+  { hex: "#b0c4d4", zh: "霧藍" },
+  // 粉紫
   { hex: "#d4b0c0", zh: "粉色" },
-  { hex: "#a85b50", zh: "玫瑰" },
+  { hex: "#e8c4cc", zh: "嬰兒粉" },
+  { hex: "#a85b50", zh: "玫瑰色" },
+  { hex: "#6b4a6b", zh: "葡萄紫" },
   { hex: "#3b0764", zh: "紫色" },
-  { hex: "#888888", zh: "灰色" },
-  { hex: "#bdbdbd", zh: "淺灰" },
+  { hex: "#9a8aa8", zh: "藕紫" },
 ];
 
 function hexToRgb(hex: string): [number, number, number] {

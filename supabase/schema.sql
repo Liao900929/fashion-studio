@@ -67,7 +67,24 @@ create table if not exists trend_cache (
 
 -- =============== STORAGE ===============
 
--- 衣物圖片儲存桶（在 Supabase Dashboard 手動建立 'clothing' bucket，公開讀）
+-- 衣物圖片儲存桶（在 Supabase Dashboard 手動建立 'clothing' bucket，設 Public）
+-- 公開桶只開放「讀」，「寫」需要下列政策，否則上傳會報 RLS error
+
+drop policy if exists "clothing read" on storage.objects;
+create policy "clothing read" on storage.objects for select
+  using (bucket_id = 'clothing');
+
+drop policy if exists "clothing insert" on storage.objects;
+create policy "clothing insert" on storage.objects for insert to authenticated
+  with check (bucket_id = 'clothing');
+
+drop policy if exists "clothing update" on storage.objects;
+create policy "clothing update" on storage.objects for update to authenticated
+  using (bucket_id = 'clothing');
+
+drop policy if exists "clothing delete" on storage.objects;
+create policy "clothing delete" on storage.objects for delete to authenticated
+  using (bucket_id = 'clothing');
 
 -- =============== RLS POLICIES ===============
 
@@ -117,5 +134,14 @@ insert into brands (name, user_id) values
   ('Stussy', null), ('Supreme', null), ('Palace', null), ('Off-White', null),
   ('Balenciaga', null), ('Rick Owens', null), ('Y-3', null), ('Ami Paris', null),
   ('Polo Ralph Lauren', null), ('Tommy Hilfiger', null), ('Levi''s', null),
-  ('Champion', null), ('Fila', null), ('Puma', null), ('Asics', null), ('Salomon', null)
+  ('Champion', null), ('Fila', null), ('Puma', null), ('Asics', null), ('Salomon', null),
+  -- 日系大眾 / 百貨品牌
+  ('niko and...', null), ('nano universe', null), ('BEAMS', null), ('UNITED ARROWS', null),
+  ('SHIPS', null), ('URBAN RESEARCH', null), ('JOURNAL STANDARD', null), ('GLOBAL WORK', null),
+  ('earth music&ecology', null), ('LOWRYS FARM', null), ('WEGO', null), ('studio CLIP', null),
+  ('COMME CA', null), ('snidel', null), ('GELATO PIQUE', null), ('archives', null),
+  ('Right-on', null), ('coen', null), ('HARE', null), ('STUDIOUS', null), ('GU', null),
+  ('sacai', null), ('Kapital', null), ('visvim', null), ('WTAPS', null), ('NEIGHBORHOOD', null),
+  ('HUMAN MADE', null), ('A BATHING APE', null), ('UNDERCOVER', null), ('mont-bell', null),
+  ('and wander', null), ('BEAUTY&YOUTH', null), ('FREAK''S STORE', null), ('niko', null)
 on conflict do nothing;

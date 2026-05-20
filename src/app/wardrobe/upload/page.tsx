@@ -9,9 +9,16 @@ import { removeBg } from "@/lib/backgroundRemoval";
 import { CATEGORY_LABELS, type Category, type Brand, type Season, SEASON_LABELS } from "@/types";
 import type { ClothingAnalysis } from "@/lib/ai/openai";
 import { matchTrends } from "@/lib/trends/ss-2026";
+import BrandCombobox from "@/components/BrandCombobox";
 import { Upload, Loader2, X } from "lucide-react";
 
 type Step = "capture" | "processing" | "review" | "saving";
+
+const MATERIALS = [
+  "棉", "丹寧", "羊毛", "針織", "皮革", "麂皮", "絲", "雪紡",
+  "天絲", "聚酯纖維", "尼龍", "麻", "水洗棉", "燈芯絨", "羊絨",
+  "毛呢", "緞面", "帆布", "法蘭絨",
+];
 
 export default function UploadPage() {
   const router = useRouter();
@@ -21,17 +28,24 @@ export default function UploadPage() {
   const [angleFiles, setAngleFiles] = useState<{ original: File; processed: Blob; previewUrl: string }[]>([]);
   const [analysis, setAnalysis] = useState<ClothingAnalysis | null>(null);
   const [category, setCategory] = useState<Category>("top");
-  const [material, setMaterial] = useState("");
+  const [materials, setMaterials] = useState<string[]>([]);
+  const [materialOther, setMaterialOther] = useState("");
   const [colorName, setColorName] = useState("");
   const [colorHex, setColorHex] = useState("");
   const [season, setSeason] = useState<Season[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandId, setBrandId] = useState<string>("");
-  const [newBrand, setNewBrand] = useState("");
   const [notes, setNotes] = useState("");
   const [processingMsg, setProcessingMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // 從複選 chips + 其他自由輸入組成材質字串（存 DB 用）
+  const material = [...materials, materialOther.trim()].filter(Boolean).join(", ");
+
+  function toggleMaterial(m: string) {
+    setMaterials((arr) => (arr.includes(m) ? arr.filter((x) => x !== m) : [...arr, m]));
+  }
 
   useEffect(() => {
     supabase
@@ -127,7 +141,13 @@ export default function UploadPage() {
           const a = data as ClothingAnalysis;
           setAnalysis(a);
           if (a.category) setCategory(a.category as Category);
-          if (a.material) setMaterial(a.material);
+          if (a.material) {
+            // 把 OpenAI 回的材質字串拆進 chips / 其他
+            const known = a.material.split(/[,，、\s+]+/).filter((m) => MATERIALS.includes(m));
+            const rest = a.material.split(/[,，、\s+]+/).filter((m) => m && !MATERIALS.includes(m));
+            if (known.length) setMaterials(known);
+            if (rest.length) setMaterialOther(rest.join(" "));
+          }
           if (a.color_name) setColorName(a.color_name);
           if (a.color_hex) setColorHex(a.color_hex);
           if (a.season) setSeason(a.season as Season[]);
@@ -153,17 +173,8 @@ export default function UploadPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("未登入");
 
-      // Add new brand if specified
-      let finalBrandId = brandId || null;
-      if (newBrand.trim() && !brandId) {
-        const { data: b, error: be } = await supabase
-          .from("brands")
-          .insert({ name: newBrand.trim(), user_id: user.id })
-          .select()
-          .single();
-        if (be) throw be;
-        finalBrandId = b.id;
-      }
+      // 品牌已由 BrandCombobox 處理（新增即存進 DB）
+      const finalBrandId = brandId || null;
 
       // Upload all angle images
       const urls: string[] = [];
@@ -319,8 +330,26 @@ export default function UploadPage() {
                 </select>
               </Field>
 
-              <Field label="材質">
-                <input className="input" value={material} onChange={(e) => setMaterial(e.target.value)} placeholder="cotton / denim / wool ..." />
+              <Field label="材質（可複選）">
+                <div className="flex gap-2 flex-wrap mb-2">
+                  {MATERIALS.map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => toggleMaterial(m)}
+                      className="tag"
+                      style={materials.includes(m) ? { background: "var(--accent)", color: "var(--bg)", borderColor: "var(--accent)" } : {}}
+                    >
+                      {m}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  className="input"
+                  value={materialOther}
+                  onChange={(e) => setMaterialOther(e.target.value)}
+                  placeholder="其他特殊材質（例：特殊水洗棉）"
+                />
               </Field>
 
               <Field label="顏色">
@@ -336,23 +365,15 @@ export default function UploadPage() {
               </Field>
 
               <Field label="品牌">
-                <select className="input" value={brandId} onChange={(e) => { setBrandId(e.target.value); setNewBrand(""); }}>
-                  <option value="">— 請選擇 —</option>
-                  {brands.map((b) => (
-                    <option key={b.id} value={b.id}>{b.name}</option>
-                  ))}
-                </select>
-                {!brandId && (
-                  <input
-                    className="input mt-2"
-                    value={newBrand}
-                    onChange={(e) => setNewBrand(e.target.value)}
-                    placeholder="或新增品牌名稱"
-                  />
-                )}
+                <BrandCombobox
+                  brands={brands}
+                  value={brandId}
+                  onChange={setBrandId}
+                  onBrandsUpdated={setBrands}
+                />
               </Field>
 
-              <Field label="季節（可複選）">
+              <Field label="季節（非必選 可複選）">
                 <div className="flex gap-2 flex-wrap pt-2">
                   {(Object.keys(SEASON_LABELS) as Season[]).map((s) => (
                     <button
@@ -431,38 +452,56 @@ function TrendRecommendation({
   if (matches.length === 0) return null;
 
   return (
-    <div className="mt-8 pt-6" style={{ borderTop: "1px solid var(--line)" }}>
-      <p className="eyebrow mb-3">SS 2026 趨勢推薦</p>
-      <p className="text-xs mb-4" style={{ color: "var(--fg-muted)" }}>
-        資料來源 Vogue Elle Harper&apos;s BAZAAR 米蘭巴黎紐約東京時裝週
+    <div className="mt-10 pt-8" style={{ borderTop: "1px solid var(--line)" }}>
+      <p className="eyebrow mb-2" style={{ fontSize: "0.85rem" }}>SS 2026 趨勢推薦</p>
+      <p className="text-sm mb-6" style={{ color: "var(--fg-dim)" }}>
+        依你的單品比對 列出最契合的 {matches.length} 個當季趨勢
       </p>
-      <div className="flex flex-col gap-3">
+      <p className="text-xs mb-6" style={{ color: "var(--fg-muted)" }}>
+        資料來源 Vogue · Elle · Harper&apos;s BAZAAR · 米蘭巴黎紐約東京時裝週
+      </p>
+      <div className="flex flex-col gap-5">
         {matches.map((m) => (
-          <div key={m.trend.id} className="card p-4" style={{ borderColor: "var(--accent-soft)" }}>
-            <div className="flex items-baseline justify-between mb-2 gap-3">
-              <h4 className="font-medium" style={{ fontSize: "0.95rem" }}>
+          <div key={m.trend.id} className="card p-6" style={{ borderColor: "var(--accent-soft)" }}>
+            <div className="flex items-center justify-between mb-3 gap-3">
+              <h4 className="serif" style={{ fontSize: "1.5rem", letterSpacing: "-0.01em" }}>
                 {m.trend.name}
               </h4>
-              <span className="text-xs" style={{ color: "var(--accent)" }}>
+              <span className="text-sm font-medium whitespace-nowrap" style={{ color: "var(--accent)" }}>
                 契合度 {Math.min(100, Math.round(m.score))}%
               </span>
             </div>
-            <p className="text-xs leading-relaxed mb-3" style={{ color: "var(--fg-dim)" }}>
+
+            {/* 契合度進度條 */}
+            <div className="mb-4" style={{ height: 4, background: "var(--bg-elev-2)", borderRadius: 999 }}>
+              <div
+                style={{
+                  height: "100%",
+                  width: `${Math.min(100, Math.round(m.score))}%`,
+                  background: "var(--accent)",
+                  borderRadius: 999,
+                }}
+              />
+            </div>
+
+            <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--fg-dim)" }}>
               {m.trend.blurb}
             </p>
-            <p className="text-xs mb-2" style={{ color: "var(--fg-muted)" }}>
+            <p className="text-xs mb-4" style={{ color: "var(--fg-muted)", letterSpacing: "0.05em" }}>
               {m.trend.source}
             </p>
-            <div className="flex gap-1.5 mb-2">
+
+            <div className="flex gap-2 mb-4">
               {m.trend.colors.slice(0, 5).map((c, i) => (
                 <span
                   key={i}
-                  className="block w-5 h-5 rounded-sm"
-                  style={{ background: c, border: "1px solid var(--line)" }}
+                  className="block rounded-sm"
+                  style={{ width: 32, height: 32, background: c, border: "1px solid var(--line)" }}
                 />
               ))}
             </div>
-            <p className="text-xs italic" style={{ color: "var(--fg-dim)" }}>
+
+            <p className="text-sm italic" style={{ color: "var(--fg-dim)" }}>
               建議搭配 {m.trend.keyPieces.slice(0, 3).join(" · ")}
             </p>
           </div>

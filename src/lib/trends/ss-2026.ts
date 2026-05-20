@@ -18,6 +18,8 @@ export type Trend = {
   categories: Category[];     // 該趨勢的關鍵單品類別
   keywords: string[];         // 描述用關鍵字（用於匹配）
   keyPieces: string[];        // 必備單品（中文描述）
+  outfitFormulas: string[];   // 「這樣穿」具體搭配公式
+  searchQuery: string;        // 外部穿搭範例搜尋關鍵字（英文）
 };
 
 export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] } = {
@@ -36,6 +38,12 @@ export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] }
       categories: ["jacket", "top", "bottom", "shoes"],
       keywords: ["米色", "卡其", "奶白", "墨色", "乾淨", "oversized", "極簡", "cashmere", "wool"],
       keyPieces: ["落肩西裝外套", "高腰直筒褲", "羊絨針織", "極簡平底鞋", "純色襯衫"],
+      outfitFormulas: [
+        "米色落肩西裝 + 白T + 高腰直筒褲 + 樂福鞋",
+        "奶白羊絨針織 + 卡其寬褲 + 尖頭平底鞋",
+        "墨色襯衫 + 同色西裝褲 + 極簡皮帶",
+      ],
+      searchQuery: "quiet luxury minimal outfit 2026",
     },
     {
       id: "earth-tones",
@@ -48,6 +56,12 @@ export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] }
       categories: ["jacket", "top", "bottom", "bag", "shoes"],
       keywords: ["陶土", "焦糖", "咖啡", "棕色", "卡其", "卡其色", "麂皮", "leather", "suede"],
       keyPieces: ["麂皮外套", "焦糖色寬褲", "陶土針織", "棕色皮鞋", "皮質肩包"],
+      outfitFormulas: [
+        "焦糖麂皮外套 + 米色針織 + 咖啡色寬褲",
+        "陶土色針織 + 同色系卡其長裙 + 棕色樂福鞋",
+        "全棕色系疊穿 + 皮質肩包點綴",
+      ],
+      searchQuery: "earth tone brown outfit 2026",
     },
     {
       id: "soft-tailoring",
@@ -60,6 +74,12 @@ export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] }
       categories: ["jacket", "bottom", "shirt"],
       keywords: ["西裝", "tailoring", "藏青", "深灰", "墨色", "linen", "lyocell"],
       keyPieces: ["落肩雙排扣西裝", "闊腿西裝褲", "絲質襯衫", "黑色腰帶"],
+      outfitFormulas: [
+        "藏青落肩西裝 + 白襯衫 + 闊腿西裝褲",
+        "深灰柔軟西裝外套 + 絲質背心 + 同色長褲",
+        "墨色雙排扣 + 高領針織 + 西裝褲",
+      ],
+      searchQuery: "soft tailoring suit outfit 2026",
     },
     {
       id: "burgundy-revival",
@@ -72,6 +92,12 @@ export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] }
       categories: ["bag", "shoes", "jacket", "accessory"],
       keywords: ["酒紅", "莓紅", "葡萄紫", "burgundy", "紅"],
       keyPieces: ["酒紅皮包", "莓紅色羊毛上衣", "酒紅高跟鞋", "burgundy 圍巾"],
+      outfitFormulas: [
+        "全身大地色 + 酒紅皮包當唯一亮點",
+        "墨色針織 + 酒紅高跟鞋 + 同色系唇彩",
+        "莓紅羊毛上衣 + 米色寬褲",
+      ],
+      searchQuery: "burgundy outfit 2026",
     },
     {
       id: "retro-sport",
@@ -84,6 +110,12 @@ export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] }
       categories: ["jacket", "top", "shoes", "bottom"],
       keywords: ["運動", "sporty", "racing", "stripe", "bomber", "track"],
       keyPieces: ["賽車外套", "復古運動衫", "白色 chunky 球鞋", "撞色 track pants"],
+      outfitFormulas: [
+        "復古賽車外套 + 白T + 直筒牛仔 + chunky 球鞋",
+        "撞色 track jacket + 同系運動褲",
+        "復古運動衫 + 百褶裙 + 復古球鞋",
+      ],
+      searchQuery: "retro sporty outfit 2026",
     },
     {
       id: "boho-romance",
@@ -96,6 +128,12 @@ export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] }
       categories: ["top", "skirt", "accessory", "bag"],
       keywords: ["蕾絲", "流蘇", "印花", "drape", "lace", "embroidery"],
       keyPieces: ["蕾絲上衣", "流蘇皮包", "印花長裙", "刺繡披肩"],
+      outfitFormulas: [
+        "白色蕾絲上衣 + 牛仔褲 + 流蘇皮包",
+        "印花長裙 + 素色針織 + 涼鞋",
+        "刺繡披肩 + 純色洋裝",
+      ],
+      searchQuery: "boho romance outfit 2026",
     },
     {
       id: "mono-soft-pastel",
@@ -108,6 +146,12 @@ export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] }
       categories: ["top", "skirt", "bottom", "shoes"],
       keywords: ["粉色", "薄荷", "藍色", "嬰兒藍", "pastel", "soft"],
       keyPieces: ["粉藕針織", "薄荷綠半身裙", "藍色襯衫"],
+      outfitFormulas: [
+        "粉藕針織 + 同色系寬褲（monochrome）",
+        "薄荷綠襯衫 + 白褲 + 白鞋",
+        "嬰兒藍洋裝 + 裸色涼鞋",
+      ],
+      searchQuery: "pastel monochrome outfit 2026",
     },
     {
       id: "denim-renewal",
@@ -120,6 +164,12 @@ export const SS_2026_TRENDS: { season: string; source: string; trends: Trend[] }
       categories: ["bottom", "jacket", "shirt"],
       keywords: ["denim", "丹寧", "牛仔", "jean", "藍色", "destroyed"],
       keyPieces: ["寬版深色牛仔", "超大丹寧外套", "白丹寧襯衫"],
+      outfitFormulas: [
+        "超大丹寧外套 + 白T + 同色牛仔（丹寧 on 丹寧）",
+        "寬版深色牛仔 + 素色針織 + 樂福鞋",
+        "白丹寧襯衫 + 卡其寬褲",
+      ],
+      searchQuery: "denim outfit 2026",
     },
   ],
 };
@@ -228,13 +278,13 @@ export function matchTrends(item: {
       reasons.push(`關鍵字呼應 ${matchedKeywords.join("、")}`);
     }
 
-    if (score >= 25) {
+    if (score >= 15) {
       matches.push({ trend, score, reasons });
     }
   }
 
   matches.sort((a, b) => b.score - a.score);
-  return matches.slice(0, 3);
+  return matches.slice(0, 6);
 }
 
 // ============================ 搭配規則式分析 ============================
